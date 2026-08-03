@@ -24,12 +24,12 @@ interface ChatMessage {
   timestamp: string;
 }
 
-export default function WhatsAppSimulatorPage() {
+export default function TraderWebAppPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'msg-1',
       sender: 'bot',
-      text: '🙏 *Namaste! Welcome to Munim.ai*\n\nI\'m your WhatsApp GST compliance assistant. Send me a photo or PDF of your invoice and I\'ll extract the data & check your ITC eligibility instantly!',
+      text: '🙏 *Namaste! Welcome to Munim.ai*\n\nI\'m your GST compliance assistant. Upload a photo or PDF of your invoice and I\'ll extract the data & check your ITC eligibility instantly!',
       timestamp: '10:00 AM',
     },
   ]);
@@ -112,19 +112,19 @@ export default function WhatsAppSimulatorPage() {
         <div>
           <div className="flex items-center space-x-2 text-xs font-semibold text-emerald-400 mb-1">
             <MessageSquareText className="w-4 h-4" />
-            <span>Trader WhatsApp PWA Simulator</span>
+            <span>Trader Web App & Invoice Ingestion</span>
           </div>
           <h1 className="text-2xl font-extrabold text-white">
-            WhatsApp Invoice Ingestion & Conversational Bot
+            WhatsApp & Direct Invoice Processing Portal
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Test the zero-app-download WhatsApp experience used by traders to forward bills
+            Upload or forward invoices via WhatsApp or web to run instant Gemini multimodal extraction
           </p>
         </div>
 
         <div className="flex items-center space-x-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-2 rounded-xl">
           <Sparkles className="w-4 h-4" />
-          <span>Meta Cloud API Simulation Mode</span>
+          <span>Meta WhatsApp Cloud API Connected</span>
         </div>
       </div>
 

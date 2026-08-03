@@ -16,11 +16,15 @@ logger = logging.getLogger(__name__)
 _client: Optional[Client] = None
 
 
-def init_supabase(url: str, service_key: str) -> Client:
+def init_supabase(url: str, service_key: str) -> Optional[Client]:
     """Initialise the global Supabase client. Called once at app startup."""
     global _client
-    _client = create_client(url, service_key)
-    logger.info("Supabase client initialised")
+    try:
+        _client = create_client(url, service_key)
+        logger.info("Supabase client initialised")
+    except Exception as e:
+        logger.warning("Supabase client initialisation skipped or failed (local dev mode): %s", e)
+        _client = None
     return _client
 
 

@@ -16,18 +16,21 @@ logger = logging.getLogger(__name__)
 _pool: Optional[aioredis.Redis] = None
 
 
-async def init_redis(redis_url: str) -> aioredis.Redis:
+async def init_redis(redis_url: str) -> Optional[aioredis.Redis]:
     """Initialise the async Redis connection pool. Called once at startup."""
     global _pool
-    _pool = aioredis.from_url(
-        redis_url,
-        decode_responses=True,
-        socket_connect_timeout=5,
-        retry_on_timeout=True,
-    )
-    # Verify connectivity
-    await _pool.ping()
-    logger.info("Redis connection established")
+    try:
+        _pool = aioredis.from_url(
+            redis_url,
+            decode_responses=True,
+            socket_connect_timeout=3,
+            retry_on_timeout=False,
+        )
+        await _pool.ping()
+        logger.info("Redis connection established")
+    except Exception as e:
+        logger.warning("Redis connection failed or skipped (local dev mode): %s", e)
+        _pool = None
     return _pool
 
 

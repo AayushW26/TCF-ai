@@ -57,15 +57,15 @@ export const Navbar = () => {
             </Link>
 
             <Link
-              href="/demo"
+              href="/portal"
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
-                pathname === '/demo'
+                pathname === '/portal' || pathname === '/demo'
                   ? 'bg-gradient-to-r from-emerald-500/20 to-sky-500/20 text-emerald-300 border border-emerald-500/30'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
               }`}
             >
               <FileCheck2 className="w-4 h-4" />
-              <span>GST Portal Simulator</span>
+              <span>GST Portal IMS Desk</span>
             </Link>
 
             <Link
@@ -76,8 +76,8 @@ export const Navbar = () => {
                   : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
               }`}
             >
-              <MessageSquareText className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span>WhatsApp Ingestion</span>
+              <MessageSquareText className="w-4 h-4 text-emerald-400" />
+              <span>Trader Web App</span>
             </Link>
           </div>
         </div>

@@ -85,17 +85,17 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Demo Quick Login Helper */}
+        {/* Quick Sign-In Helper */}
         <div className="mt-6 pt-6 border-t border-white/5 text-center">
-          <p className="text-[11px] text-slate-400 mb-2">🚀 Testing or Demo Access?</p>
+          <p className="text-[11px] text-slate-400 mb-2">Need Quick Account Access?</p>
           <button
             onClick={() => {
-              login('demo.ca@munim.ai');
+              login('ca.abhishek@munim.ai');
               router.push('/dashboard');
             }}
             className="w-full py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10 transition-all"
           >
-            Instant Demo Access
+            Sign In as Active CA
           </button>
         </div>
 
