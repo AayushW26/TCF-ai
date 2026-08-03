@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GST Compliance Report — {{ trader.business_name }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
+            color: #1a1a2e;
+            line-height: 1.5;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #0f3460;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: #0f3460;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            color: #16213e;
+        }
+
+        .header .meta {
+            font-size: 10px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .section h2 {
+            font-size: 14px;
+            color: #0f3460;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+        }
+
+        .summary-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .summary-card {
+            flex: 1;
+            min-width: 120px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .summary-card .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f3460;
+        }
+
+        .summary-card .label {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .summary-card.confirmed .value { color: #27ae60; }
+        .summary-card.at-risk .value { color: #f39c12; }
+        .summary-card.blocked .value { color: #e74c3c; }
+        .summary-card.fraud .value { color: #c0392b; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 10px;
+        }
+
+        th {
+            background: #0f3460;
+            color: white;
+            padding: 8px 6px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 6px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:nth-child(even) { background: #f8f9fa; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-confirmed { background: #d5f5e3; color: #27ae60; }
+        .status-at-risk { background: #fdebd0; color: #f39c12; }
+        .status-blocked { background: #fadbd8; color: #e74c3c; }
+        .status-fraud { background: #f5b7b1; color: #c0392b; }
+        .status-pending { background: #eaecee; color: #7f8c8d; }
+
+        .action-item {
+            background: #fff5f5;
+            border-left: 4px solid #e94560;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .action-item .title {
+            font-weight: bold;
+            color: #c0392b;
+        }
+
+        .action-item .desc {
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .action-item .fix {
+            color: #0f3460;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 9px;
+            color: #999;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 15px;
+        }
+
+        .amount { text-align: right; font-variant-numeric: tabular-nums; }
+        .nowrap { white-space: nowrap; }
+
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        @media print {
+            body { padding: 0; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>GST Compliance Report</h1>
+        <div class="subtitle">{{ trader.business_name }}</div>
+        <div class="meta">
+            {% if trader.gstin %}GSTIN: {{ trader.gstin }} | {% endif %}
+            Period: {{ period }} |
+            Generated: {{ generated_at }}
+        </div>
+    </div>
+
+    <!-- ITC Summary -->
+    <div class="section">
+        <h2>📊 ITC Summary</h2>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="value">₹{{ "{:,.2f}".format(total_itc) }}</div>
+                <div class="label">Total ITC</div>
+            </div>
+            <div class="summary-card confirmed">
+                <div class="value">₹{{ "{:,.2f}".format(confirmed) }}</div>
+                <div class="label">Confirmed</div>
+            </div>
+            <div class="summary-card at-risk">
+                <div class="value">₹{{ "{:,.2f}".format(at_risk) }}</div>
+                <div class="label">At Risk</div>
+            </div>
+            <div class="summary-card blocked">
+                <div class="value">₹{{ "{:,.2f}".format(blocked) }}</div>
+                <div class="label">Blocked</div>
+            </div>
+            <div class="summary-card fraud">
+                <div class="value">₹{{ "{:,.2f}".format(fraud_flagged) }}</div>
+                <div class="label">Fraud Flagged</div>
+            </div>
+        </div>
+        <p>Total invoices processed: <strong>{{ total_invoices }}</strong></p>
+    </div>
+
+    <!-- Reconciliation Summary -->
+    <div class="section">
+        <h2>🔄 GSTR-2B Reconciliation</h2>
+        <div class="summary-grid">
+            <div class="summary-card confirmed">
+                <div class="value">{{ matched_count }}</div>
+                <div class="label">Matched</div>
+            </div>
+            <div class="summary-card at-risk">
+                <div class="value">{{ unmatched_count }}</div>
+                <div class="label">Unmatched</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Items -->
+    {% if actions %}
+    <div class="section">
+        <h2>⚡ Open Action Items ({{ actions|length }})</h2>
+        {% for action in actions %}
+        <div class="action-item">
+            <div class="title">{{ action.title }}</div>
+            <div class="desc">{{ action.description[:300] }}</div>
+            {% if action.recommended_fix %}
+            <div class="fix">💡 {{ action.recommended_fix[:200] }}</div>
+            {% endif %}
+            {% if action.affected_amount %}
+            <div class="desc">Affected Amount: ₹{{ "{:,.2f}".format(action.affected_amount) }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Invoice Details -->
+    <div class="section">
+        <h2>📋 Invoice Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Supplier</th>
+                    <th>GSTIN</th>
+                    <th>Date</th>
+                    <th class="amount">Amount</th>
+                    <th class="amount">Tax</th>
+                    <th>ITC Status</th>
+                    <th>Fraud</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr>
+                    <td class="nowrap">{{ inv.invoice_number or 'N/A' }}</td>
+                    <td>{{ (inv.supplier_name or 'Unknown')[:25] }}</td>
+                    <td class="nowrap">{{ inv.supplier_gstin or 'N/A' }}</td>
+                    <td class="nowrap">{{ inv.invoice_date or 'N/A' }}</td>
+                    <td class="amount">₹{{ "{:,.2f}".format(inv.total_amount or 0) }}</td>
+                    <td class="amount">₹{{ "{:,.2f}".format((inv.cgst or 0) + (inv.sgst or 0) + (inv.igst or 0) + (inv.cess or 0)) }}</td>
+                    <td>
+                        {% set status = inv.itc_status or 'PENDING' %}
+                        {% if status == 'CONFIRMED' %}
+                        <span class="status-badge status-confirmed">Confirmed</span>
+                        {% elif status == 'AT_RISK' %}
+                        <span class="status-badge status-at-risk">At Risk</span>
+                        {% elif status == 'FRAUD_FLAGGED' %}
+                        <span class="status-badge status-fraud">Fraud</span>
+                        {% elif status in ('FIXABLE_BLOCKED', 'INELIGIBLE') %}
+                        <span class="status-badge status-blocked">Blocked</span>
+                        {% else %}
+                        <span class="status-badge status-pending">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ inv.fraud_score or 0 }}/100</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Supplier Health -->
+    {% if flagged_suppliers %}
+    <div class="section">
+        <h2>⚠️ Flagged Suppliers</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Supplier</th>
+                    <th>GSTIN</th>
+                    <th>Score</th>
+                    <th>Filed / Tracked</th>
+                    <th class="amount">Total Value</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sup in flagged_suppliers %}
+                <tr>
+                    <td>{{ sup.supplier_name or 'Unknown' }}</td>
+                    <td class="nowrap">{{ sup.supplier_gstin }}</td>
+                    <td>{{ sup.compliance_score }}%</td>
+                    <td>{{ sup.months_filed }} / {{ sup.total_months_tracked }}</td>
+                    <td class="amount">₹{{ "{:,.2f}".format(sup.total_invoice_value or 0) }}</td>
+                    <td>{{ (sup.flag_reason or 'Non-compliant')[:50] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>This report was auto-generated by Munim.ai (TCF-ai) on {{ generated_at }}.</p>
+        <p>Total suppliers tracked: {{ total_suppliers }} | Flagged: {{ flagged_suppliers|length }}</p>
+        <p>This is a computer-generated document. Consult your CA for tax advice.</p>
+    </div>
+
+</body>
+</html>
